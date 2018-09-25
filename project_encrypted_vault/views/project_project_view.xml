@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Modoolar <info@modoolar.com>
+  License LGPLv3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
+-->
+<odoo>
+    <record id="view_project_project_vault_kanban" model="ir.ui.view">
+        <field name="name">project.project.vault.kanban</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="vault_count" invisible="1"/>
+            </field>
+            <xpath expr="//a[@name='%(project.act_project_project_2_project_task_all)d']" position="after">
+                <a class="o_project_kanban_box" name="open_vaults" type="object">
+                    <div>
+                        <span class="o_value">
+                            <t t-esc="record.vault_count.value"/>
+                        </span>
+                        <span class="o_label">
+                            Vaults
+                        </span>
+                    </div>
+                </a>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_project_project_vault_form" model="ir.ui.view">
+        <field name="name">project.project.vault.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Encrypted vaults" name="encryoted_vaults">
+                    <field name="vault_ids" context="{'default_project_id': id}"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

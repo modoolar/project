@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Modoolar <info@modoolar.com>
+  License LGPLv3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
+-->
+<odoo>
+    <data noupdate="1">
+        <record id="project.group_project_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('encrypted_vault.group_encrypted_vault_user'))]"/>
+        </record>
+
+        <record id="project.group_project_manager" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('encrypted_vault.group_encrypted_vault_manager'))]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2018 Modoolar <info@modoolar.com>
+  License LGPLv3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.en.html).
+-->
+<odoo>
+    <record id="view_encrypted_vault_project_form" model="ir.ui.view">
+        <field name="name">encrypted.vault.project.form</field>
+        <field name="model">encrypted.vault</field>
+        <field name="inherit_id" ref="encrypted_vault.view_encrypted_vault_form"/>
+        <field name="arch" type="xml">
+            <group name="right" position="inside">
+                <field name="project_id" readonly="context.get('default_project_id', False)"/>
+            </group>
+        </field>
+    </record>
+
+    <record id="view_encrypted_vault_project_tree" model="ir.ui.view">
+        <field name="name">encrypted.vault.project.tree</field>
+        <field name="model">encrypted.vault</field>
+        <field name="inherit_id" ref="encrypted_vault.view_encrypted_vault_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="project_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_encrypted_vault_project_search" model="ir.ui.view">
+        <field name="name">encrypted.vault.project.search</field>
+        <field name="model">encrypted.vault</field>
+        <field name="inherit_id" ref="encrypted_vault.view_encrypted_vault_search"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <group expand="1" string="Group By">
+                    <field name="project_id"/>
+                    <filter name="group_project" string="Project" context="{'group_by': 'project_id'}"/>
+                </group>
+            </field>
+        </field>
+    </record>
+
+    <record id="encrypted_vault.action_encrypted_vault" model="ir.actions.act_window">
+        <field name="context">{'search_default_group_project': 1}</field>
+    </record>
+</odoo>

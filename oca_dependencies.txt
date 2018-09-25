@@ -1,0 +1,4 @@
+project
+server  https://github.com/modoolar/server
+vault   https://github.com/modoolar/vault
+web     https://github.com/modoolar/web
