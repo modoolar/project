@@ -3,18 +3,18 @@
 odoo.define('project_workflow_management.DiagramController', function (require) {
     "use strict";
 
-    var core = require('web.core');
-    var Dialog = require('web.Dialog');
-    var dialogs = require('web.view_dialogs');
-    var rpc = require('web.rpc');
+    const core = require('web.core');
+    const Dialog = require('web.Dialog');
+    const dialogs = require('web.view_dialogs');
+    const rpc = require('web.rpc');
 
-    var _t = core._t;
-    var QWeb = core.qweb;
+    const _t = core._t;
+    const QWeb = core.qweb;
 
     require('web_diagram.DiagramController').include({
         renderButtons: function ($node) {
             if (this.modelName === 'project.workflow') {
-                var self = this;
+                const self = this;
 
                 this.$buttons = $(QWeb.render("ProjectWorkflow.buttons", {'widget': this}));
                 this.$buttons.on('click', '.o_diagram_edit', function () {
@@ -37,8 +37,8 @@ odoo.define('project_workflow_management.DiagramController', function (require) 
                     self.button_workflow_export();
                 });
 
-                $node = $node || this.options.$buttons;
-                this.$buttons.appendTo($node);
+                const node = $node || this.options.$buttons;
+                this.$buttons.appendTo(node);
 
             } else {
                 this._super($node);
@@ -50,13 +50,13 @@ odoo.define('project_workflow_management.DiagramController', function (require) 
         },
 
         edit_workflow() {
-            var self = this;
+            const self = this;
             rpc.query({
                 model: 'ir.model.data',
                 method: 'xmlid_to_res_id',
                 args: ["project_workflow_management.edit_project_workflow"],
             }).then(function (view_id) {
-                var title = _t('Workflow');
+                const title = _t('Workflow');
                 new dialogs.FormViewDialog(self, {
                     res_model: self.modelName,
                     res_id: self.model.res_id,
@@ -69,15 +69,14 @@ odoo.define('project_workflow_management.DiagramController', function (require) 
         },
 
         button_workflow_publish: function () {
-            var self = this;
-            var publish_workflow = function () {
+            const self = this;
+            const publish_workflow = function () {
                 rpc.query({
                     model: self.modelName,
                     method: 'read',
                     args: [[self.model.res_id], ['original_name']]
                 }).then(function (data) {
-                    var wkf_name = data[0].original_name;
-                    console.log(data);
+                    const wkf_name = data[0].original_name;
 
                     rpc.query({
                         model: 'project.workflow',
@@ -85,39 +84,40 @@ odoo.define('project_workflow_management.DiagramController', function (require) 
                         args: [self.model.res_id],
                         context: {diagram: true}
                     }).then(function (result) {
-                        console.log("Publish Action: ", result);
-                        if (result)
+                        if (result) {
                             self.do_action(result);
-                        else
+                        } else {
                             return self.do_action({'type': 'history.back'}).then(function () {
                                 Dialog.alert(self, _t("Workflow '" + wkf_name + "' has been successfully published!"));
                             });
+                        }
                     });
                 });
             };
 
-            Dialog.confirm(self, _t("Are you sure you want to publish this workflow?"), {confirm_callback: publish_workflow})
+            Dialog.confirm(self, _t("Are you sure you want to publish this workflow?"), {confirm_callback: publish_workflow});
         },
 
         button_workflow_discard: function () {
-            var self = this;
+            const self = this;
 
-            var discard_workflow = function () {
+            const discard_workflow = function () {
                 rpc.query({
                     model: 'project.workflow',
                     method: 'discard_working_copy',
                     args: [[self.model.res_id]],
                 }).then(function (result) {
-                    if (result)
+                    if (result) {
                         self.do_action(result);
+                    }
                 });
-            }
+            };
 
-            Dialog.confirm(self, _t("Are you sure you want to discard this workflow?"), {confirm_callback: discard_workflow})
+            Dialog.confirm(self, _t("Are you sure you want to discard this workflow?"), {confirm_callback: discard_workflow});
         },
 
         button_workflow_export: function () {
-            var self = this;
+            const self = this;
 
             rpc.query({
                 model: 'project.workflow',

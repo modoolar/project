@@ -6,7 +6,7 @@ odoo.define('project_workflow_management.DiagramRenderer', function (require) {
     require('web_diagram_position.DiagramRenderer').include({
 
         _get_style: function () {
-            var style = this._super();
+            const style = this._super();
 
             if (this.getParent().modelName === 'project.workflow') {
                 style.yellow = "#f6c342";

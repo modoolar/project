@@ -4,18 +4,17 @@
 odoo.define('project_workflow_management.TaskWorkflow', function (require) {
     "use strict";
 
-    var config = require('web.config');
-    var core = require('web.core');
-    var field_registry = require('web.field_registry');
+    const core = require('web.core');
+    const field_registry = require('web.field_registry');
 
 
-    var AbstractField = require('web.AbstractField');
-    var rpc = require('web.rpc');
-    var QWeb = core.qweb;
+    const AbstractField = require('web.AbstractField');
+    const rpc = require('web.rpc');
+    const QWeb = core.qweb;
 
-    var DEFAULT_VISIBLE_TRANSITIONS = 3;
+    const DEFAULT_VISIBLE_TRANSITIONS = 3;
 
-    var TaskWorkflow = AbstractField.extend({
+    const TaskWorkflow = AbstractField.extend({
         className: 'o_statusbar_status',
         events: {
             'click button:not(.dropdown-toggle)': '_onClickStage',
@@ -24,7 +23,8 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
 
         init: function () {
             this._super.apply(this, arguments);
-            this._onClickStage = _.debounce(this._onClickStage, 300, true); // TODO maybe not useful anymore ?
+            // TODO maybe not useful anymore ?
+            this._onClickStage = _.debounce(this._onClickStage, 300, true);
 
             this.nodeOptions.no_visible_transitions = this.nodeOptions.no_visible_transitions || DEFAULT_VISIBLE_TRANSITIONS;
             this.max_visible_transitions = this.nodeOptions.no_visible_transitions;
@@ -36,14 +36,12 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
         },
 
         willStart: function () {
-            var self = this;
-            return this._super.apply(this, arguments).then(() => {
-                return self._fetch_available_transitions();
-            });
+            const self = this;
+            return this._super.apply(this, arguments).then(() => self._fetch_available_transitions());
         },
 
         _fetch_available_transitions: function () {
-            let self = this;
+            const self = this;
             return rpc.query({
                 model: 'project.workflow',
                 method: 'get_state_transitions',
@@ -56,18 +54,18 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
                     self.transitions_available[transition.id] = transition;
                 });
 
-                let count = 0
+                let count = 0;
 
-                transitions = transitions.sort((a, b) => a.sequence > b.sequence);
+                const sortedTransitions = transitions.sort((a, b) => a.sequence > b.sequence);
 
                 self.transitions_visible = [];
-                while (count < transitions.length && count < self.max_visible_transitions) {
-                    self.transitions_visible.push(transitions[count++]);
+                while (count < sortedTransitions.length && count < self.max_visible_transitions) {
+                    self.transitions_visible.push(sortedTransitions[count++]);
                 }
 
                 self.transitions_hidden = [];
-                while (count < transitions.length) {
-                    self.transitions_hidden.push(transitions[count++]);
+                while (count < sortedTransitions.length) {
+                    self.transitions_hidden.push(sortedTransitions[count++]);
                 }
             });
         },
@@ -75,7 +73,7 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
         _render: function () {
             this.$el.off('click', 'button[data-id]', this._onClickStage);
 
-            var $content = $(QWeb.render("TaskWorkflowNavigation.content", {
+            const $content = $(QWeb.render("TaskWorkflowNavigation.content", {
                 'widget': this,
             }));
 
@@ -84,7 +82,7 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
         },
 
         _onClickStage: function (e) {
-            let state = this.transitions_available[$(e.currentTarget).data("value")]
+            const state = this.transitions_available[$(e.currentTarget).data("value")];
 
             if (state.confirmation) {
                 this._do_confirmation(state);
@@ -101,35 +99,35 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
         },
 
         _prepare_values_for_update(state) {
-            let changes = {};
-            changes['stage_id'] = {id: state.id};
+            const changes = {};
+            changes.stage_id = {id: state.id};
             return changes;
         },
 
         _do_confirmation: function (state) {
-            var self = this;
+            const self = this;
             return rpc.query({
                 model: 'ir.actions.act_window',
                 method: 'for_xml_id',
                 args: [this.confirmation_action.module, this.confirmation_action.xml_id],
             }).then(function (action) {
-                var options = self.build_confirmation_options(state);
+                const options = self.build_confirmation_options(state);
                 return self.do_action(action, options);
             });
         },
 
         build_confirmation_context: function (state) {
-            let parent = this.getParent();
-            let parent_state = parent.state;
-            var context = parent_state.getContext();
-            context['default_task_id'] = this.res_id;
-            context['default_stage_id'] = state.id;
+            const parent = this.getParent();
+            const parent_state = parent.state;
+            const context = parent_state.getContext();
+            context.default_task_id = this.res_id;
+            context.default_stage_id = state.id;
             return context;
         },
 
         build_confirmation_options: function (state) {
-            var self = this;
-            var options = {};
+            const self = this;
+            const options = {};
             options.additional_context = this.build_confirmation_context(state);
             options.on_close = function () {
                 self.getParent().getParent().reload.bind(self);
@@ -143,8 +141,9 @@ odoo.define('project_workflow_management.TaskWorkflow', function (require) {
                     method: 'read',
                     args: [self.res_id, ['stage_id']],
                 }).then(function (record) {
-                    if (record[0].stage_id[0] == state.id)
+                    if (record[0].stage_id[0] === state.id) {
                         self._update_state(state);
+                    }
                 });
             };
             return options;
