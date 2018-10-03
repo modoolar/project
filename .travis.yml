@@ -18,7 +18,7 @@ addons:
 
 env:
   global:
-  - VERSION="11.0" TESTS="0" LINT_CHECK="0"
+  - VERSION="11.0" TESTS="0" LINT_CHECK="0" PYLINT_ODOO_JSLINTRC=${TRAVIS_BUILD_DIR}/.jslintrc
   - WKHTMLTOPDF_VERSION="0.12.4"
   matrix:
   - LINT_CHECK="1"
