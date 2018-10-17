@@ -24,10 +24,5 @@
         "views/project_task.xml",
         "views/res_users.xml",
     ],
-
-    "demo": [],
-    "qweb": [
-        "static/src/xml/project_timesheet.xml",
-    ],
     "application": False
 }
