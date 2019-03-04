@@ -129,6 +129,7 @@ class Task(models.Model):
         comodel_name='project.workflow.state',
         string='Workflow State',
         compute="_compute_workflow_state",
+        compute_sudo=True,
         store=True
     )
 
